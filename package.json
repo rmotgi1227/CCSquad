@@ -1,0 +1,31 @@
+{
+  "name": "claude-squad",
+  "version": "1.0.0",
+  "description": "A shared communication channel for Claude Code instances — a Slack channel for agents.",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "claude-squad": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": ["claude", "mcp", "agents", "ai", "coordination"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "better-sqlite3": "^12.8.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  }
+}
