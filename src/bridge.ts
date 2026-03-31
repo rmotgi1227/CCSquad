@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * claude-squad MCP bridge
+ * ccsquad MCP bridge
  * One of these runs per Claude Code instance (stdio transport).
  * Connects to the shared daemon, exposes MCP tools.
  */
@@ -18,7 +18,7 @@ import { makeInstanceId, nowMs, getRepoId, formatAge, DEFAULT_MESSAGES_LIMIT } f
 const STARTUP_TS = nowMs();
 const PID = process.pid;
 
-const INSTANCE_NAME = process.env.CLAUDE_SQUAD_NAME || path.basename(process.cwd());
+const INSTANCE_NAME = process.env.CCSQUAD_NAME || path.basename(process.cwd());
 const CWD = process.cwd();
 
 function getCurrentBranch(): string | null {
@@ -47,7 +47,7 @@ async function register(): Promise<string> {
 }
 
 const server = new Server(
-  { name: "claude-squad", version: "1.0.0" },
+  { name: "ccsquad", version: "1.1.0" },
   { capabilities: { tools: {} } }
 );
 

@@ -18,11 +18,11 @@ function tempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), "cs-uninstall-test-"));
 }
 
-const PASSIVE_BLOCK = `<!-- claude-squad:start mode=passive -->
+const PASSIVE_BLOCK = `<!-- ccsquad:start mode=passive -->
 ## claude-squad coordination
 
 On session start: call \`list_instances\` and \`read_messages\`.
-<!-- claude-squad:end -->`;
+<!-- ccsquad:end -->`;
 
 describe("runUninstall", () => {
   let dir: string;
@@ -53,8 +53,8 @@ describe("runUninstall", () => {
       await runUninstall(opts());
 
       const content = fs.readFileSync(claudeMdPath, "utf8");
-      expect(content).not.toContain("claude-squad:start");
-      expect(content).not.toContain("claude-squad:end");
+      expect(content).not.toContain("ccsquad:start");
+      expect(content).not.toContain("ccsquad:end");
       expect(content).toContain("# My Project");
       expect(content).toContain("Other content.");
     });
@@ -76,7 +76,7 @@ describe("runUninstall", () => {
     it("removes claude-squad from claude.json mcpServers", async () => {
       fs.writeFileSync(path.join(dir, ".claude.json"), JSON.stringify({
         mcpServers: {
-          "claude-squad": { command: "claude-squad", args: [] },
+          "ccsquad": { command: "ccsquad", args: [] },
           "other-mcp": { command: "other", args: [] },
         },
       }, null, 2), "utf8");
@@ -84,7 +84,7 @@ describe("runUninstall", () => {
       await runUninstall(opts());
 
       const cfg = JSON.parse(fs.readFileSync(path.join(dir, ".claude.json"), "utf8"));
-      expect(cfg.mcpServers["claude-squad"]).toBeUndefined();
+      expect(cfg.mcpServers["ccsquad"]).toBeUndefined();
       expect(cfg.mcpServers["other-mcp"]).toBeTruthy();
     });
 

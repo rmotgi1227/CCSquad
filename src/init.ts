@@ -1,5 +1,5 @@
 /**
- * claude-squad init command
+ * ccsquad init command
  * Sets up MCP registration, injects CLAUDE.md coordination block, optionally status line.
  */
 import * as fs from "fs";
@@ -19,21 +19,21 @@ export interface InitOptions {
   squadDir?: string;
 }
 
-const SENTINEL_START_RE = /<!-- claude-squad:start(?: mode=(\w+))? -->/;
-const SENTINEL_END = "<!-- claude-squad:end -->";
+const SENTINEL_START_RE = /<!-- ccsquad:start(?: mode=(\w+))? -->/;
+const SENTINEL_END = "<!-- ccsquad:end -->";
 
 const PASSIVE_BLOCK = (mode = "passive") =>
-  `<!-- claude-squad:start mode=${mode} -->
-## claude-squad coordination
+  `<!-- ccsquad:start mode=${mode} -->
+## ccsquad coordination
 
 On session start: call \`list_instances\` and \`read_messages\` to catch up on squad activity.
 Answer squad questions when asked. Broadcast major architectural decisions (new DB schema,
 error handling pattern, shared utility, API contract change).
-<!-- claude-squad:end -->`;
+<!-- ccsquad:end -->`;
 
 const AGGRESSIVE_BLOCK =
-  `<!-- claude-squad:start mode=aggressive -->
-## claude-squad coordination
+  `<!-- ccsquad:start mode=aggressive -->
+## ccsquad coordination
 
 On session start: call \`list_instances\` and \`read_messages\`.
 Before any of these: broadcast intent first — schema changes, new shared utilities,
@@ -41,7 +41,7 @@ API design decisions, error handling patterns.
 Examples: adding a DB table, creating a shared util function, choosing an HTTP error shape.
 After completing significant work: broadcast what you built and conventions established.
 Answer squad questions proactively.
-<!-- claude-squad:end -->`;
+<!-- ccsquad:end -->`;
 
 function getTemplate(mode: "passive" | "aggressive"): string {
   return mode === "aggressive" ? AGGRESSIVE_BLOCK : PASSIVE_BLOCK(mode);
@@ -106,8 +106,8 @@ export async function runInit(opts: InitOptions = {}): Promise<void> {
   try {
     const cfg = readJson(claudeJsonPath);
     const mcpServers = (cfg.mcpServers as Record<string, unknown>) ?? {};
-    if (!mcpServers["claude-squad"] || opts.update) {
-      mcpServers["claude-squad"] = { command: "claude-squad", args: [] };
+    if (!mcpServers["ccsquad"] || opts.update) {
+      mcpServers["ccsquad"] = { command: "ccsquad", args: [] };
       cfg.mcpServers = mcpServers;
       writeJsonAtomic(claudeJsonPath, cfg);
       modified.push(claudeJsonPath);
@@ -117,7 +117,7 @@ export async function runInit(opts: InitOptions = {}): Promise<void> {
     }
   } catch (err) {
     console.error(`  Could not update ${claudeJsonPath}: ${err instanceof Error ? err.message : String(err)}`);
-    console.error(`  Manual step: add to ~/.claude.json → mcpServers.claude-squad: { command: "claude-squad", args: [] }`);
+    console.error(`  Manual step: add to ~/.claude.json → mcpServers.ccsquad: { command: "ccsquad", args: [] }`);
   }
 
   // Step 2+3: Inject CLAUDE.md coordination block
@@ -129,7 +129,7 @@ export async function runInit(opts: InitOptions = {}): Promise<void> {
     let newContent: string;
     if (detected.found) {
       if (!opts.update) {
-        console.log(`  CLAUDE.md already has claude-squad block. Run with --update to refresh.`);
+        console.log(`  CLAUDE.md already has ccsquad block. Run with --update to refresh.`);
         newContent = existing; // no change
       } else {
         const effectiveMode = opts.mode ?? (detected.mode as "passive" | "aggressive") ?? "passive";
@@ -157,7 +157,7 @@ export async function runInit(opts: InitOptions = {}): Promise<void> {
 
   // Step 4: Inject status line hook (optional)
   if (opts.statusLine) {
-    const squadDir = opts.squadDir ?? path.join(os.homedir(), ".claude-squad");
+    const squadDir = opts.squadDir ?? path.join(os.homedir(), ".ccsquad");
     const scriptPath = path.join(squadDir, "statusline.sh");
     try {
       fs.mkdirSync(squadDir, { recursive: true });
@@ -208,9 +208,9 @@ export async function runInit(opts: InitOptions = {}): Promise<void> {
     console.error(`  Warning: could not start daemon: ${err instanceof Error ? err.message : String(err)}`);
     if (modified.length > 0) {
       console.error(`  Files already modified: ${modified.join(", ")}`);
-      console.error(`  Run 'claude-squad --ensure-running' to start the daemon manually.`);
+      console.error(`  Run 'ccsquad --ensure-running' to start the daemon manually.`);
     }
   }
 
-  console.log(`\nclaude-squad ready. Open Claude Code in any worktree.`);
+  console.log(`\nccsquad ready. Open Claude Code in any worktree.`);
 }

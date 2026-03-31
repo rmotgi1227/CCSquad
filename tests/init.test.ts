@@ -42,7 +42,7 @@ describe("runInit", () => {
     it("registers claude-squad in claude.json", async () => {
       await runInit(opts());
       const cfg = JSON.parse(fs.readFileSync(path.join(dir, ".claude.json"), "utf8"));
-      expect(cfg.mcpServers["claude-squad"]).toEqual({ command: "claude-squad", args: [] });
+      expect(cfg.mcpServers["ccsquad"]).toEqual({ command: "ccsquad", args: [] });
     });
 
     it("preserves existing mcpServers entries", async () => {
@@ -52,13 +52,13 @@ describe("runInit", () => {
       await runInit(opts());
       const cfg = JSON.parse(fs.readFileSync(path.join(dir, ".claude.json"), "utf8"));
       expect(cfg.mcpServers["other-mcp"]).toBeTruthy();
-      expect(cfg.mcpServers["claude-squad"]).toBeTruthy();
+      expect(cfg.mcpServers["ccsquad"]).toBeTruthy();
     });
 
     it("does not crash when claude.json does not exist", async () => {
       await expect(runInit(opts())).resolves.not.toThrow();
       const cfg = JSON.parse(fs.readFileSync(path.join(dir, ".claude.json"), "utf8"));
-      expect(cfg.mcpServers["claude-squad"]).toBeTruthy();
+      expect(cfg.mcpServers["ccsquad"]).toBeTruthy();
     });
 
     it("skips re-registration when already present (no --update)", async () => {
@@ -73,7 +73,7 @@ describe("runInit", () => {
       await runInit(opts());
       await runInit(opts({ update: true }));
       const cfg = JSON.parse(fs.readFileSync(path.join(dir, ".claude.json"), "utf8"));
-      expect(cfg.mcpServers["claude-squad"]).toEqual({ command: "claude-squad", args: [] });
+      expect(cfg.mcpServers["ccsquad"]).toEqual({ command: "ccsquad", args: [] });
     });
   });
 
@@ -81,14 +81,14 @@ describe("runInit", () => {
     it("creates passive block by default", async () => {
       await runInit(opts());
       const content = fs.readFileSync(path.join(dir, "CLAUDE.md"), "utf8");
-      expect(content).toContain("<!-- claude-squad:start mode=passive -->");
-      expect(content).toContain("<!-- claude-squad:end -->");
+      expect(content).toContain("<!-- ccsquad:start mode=passive -->");
+      expect(content).toContain("<!-- ccsquad:end -->");
     });
 
     it("creates aggressive block when mode=aggressive", async () => {
       await runInit(opts({ mode: "aggressive" }));
       const content = fs.readFileSync(path.join(dir, "CLAUDE.md"), "utf8");
-      expect(content).toContain("<!-- claude-squad:start mode=aggressive -->");
+      expect(content).toContain("<!-- ccsquad:start mode=aggressive -->");
       expect(content).not.toContain("mode=passive");
     });
 
@@ -98,7 +98,7 @@ describe("runInit", () => {
       const content = fs.readFileSync(path.join(dir, "CLAUDE.md"), "utf8");
       expect(content).toContain("# My Project");
       expect(content).toContain("Existing content");
-      expect(content).toContain("claude-squad:start");
+      expect(content).toContain("ccsquad:start");
     });
 
     it("is idempotent — second call without --update skips re-injection", async () => {
@@ -113,7 +113,7 @@ describe("runInit", () => {
       await runInit(opts());
       await runInit(opts({ update: true }));
       const content = fs.readFileSync(path.join(dir, "CLAUDE.md"), "utf8");
-      const count = (content.match(/<!-- claude-squad:start/g) || []).length;
+      const count = (content.match(/<!-- ccsquad:start/g) || []).length;
       expect(count).toBe(1);
     });
 

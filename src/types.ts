@@ -3,7 +3,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { execSync } from "child_process";
 
-export const SQUAD_DIR = path.join(os.homedir(), ".claude-squad");
+export const SQUAD_DIR = path.join(os.homedir(), ".ccsquad");
 export const SOCKET_PATH = path.join(SQUAD_DIR, "server.sock");
 export const LOCK_PATH = path.join(SQUAD_DIR, "server.lock");
 export const DB_PATH = path.join(SQUAD_DIR, "state.db");

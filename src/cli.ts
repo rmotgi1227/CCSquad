@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * claude-squad CLI entry point
+ * ccsquad CLI entry point
  * Usage:
- *   claude-squad                       → starts the MCP bridge (stdio)
- *   claude-squad --ensure-running      → starts daemon if not running, then exits
- *   claude-squad init [opts]           → setup: MCP + CLAUDE.md + optional status line
- *   claude-squad uninstall             → remove everything
- *   claude-squad status [--short]      → print active instances + recent messages
- *   claude-squad export                → dump channel history as markdown
- *   claude-squad daemon                → start the daemon directly (for debugging)
+ *   ccsquad                       → starts the MCP bridge (stdio)
+ *   ccsquad --ensure-running      → starts daemon if not running, then exits
+ *   ccsquad init [opts]           → setup: MCP + CLAUDE.md + optional status line
+ *   ccsquad uninstall             → remove everything
+ *   ccsquad status [--short]      → print active instances + recent messages
+ *   ccsquad export                → dump channel history as markdown
+ *   ccsquad daemon                → start the daemon directly (for debugging)
  */
 import { formatAge } from "./types.js";
 
@@ -63,7 +63,7 @@ async function runStatus(short = false): Promise<void> {
   const { daemonRpc, isDaemonRunning } = await import("./client.js");
 
   if (!(await isDaemonRunning())) {
-    if (!short) console.log("claude-squad: daemon not running");
+    if (!short) console.log("ccsquad: daemon not running");
     return;
   }
 
@@ -80,7 +80,7 @@ async function runStatus(short = false): Promise<void> {
     return;
   }
 
-  console.log("\n=== claude-squad status ===\n");
+  console.log("\n=== ccsquad status ===\n");
 
   if (instancesResult.instances.length === 0) {
     console.log("No active instances.\n");
@@ -111,7 +111,7 @@ async function runExport(): Promise<void> {
   const { daemonRpc, isDaemonRunning } = await import("./client.js");
 
   if (!(await isDaemonRunning())) {
-    console.log("claude-squad: daemon not running");
+    console.log("ccsquad: daemon not running");
     return;
   }
 
@@ -120,7 +120,7 @@ async function runExport(): Promise<void> {
   };
 
   const lines: string[] = [
-    "# claude-squad context export",
+    "# ccsquad context export",
     `Generated: ${new Date().toISOString()}`,
     "",
   ];

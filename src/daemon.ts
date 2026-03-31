@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * claude-squad daemon
+ * ccsquad daemon
  * Runs as a detached background process. Owns SQLite. Accepts bridge connections
  * via Unix socket (or TCP on Windows). Handles all DB operations.
  */
@@ -212,7 +212,7 @@ async function startServer(): Promise<void> {
       // Write PID and token only after socket is confirmed ready
       fs.writeFileSync(DAEMON_PID_PATH, String(process.pid), "utf8");
       fs.writeFileSync(SHUTDOWN_TOKEN_PATH, shutdownToken, { encoding: "utf8", mode: 0o600 });
-      process.stdout.write(`claude-squad daemon listening on 127.0.0.1:${port}\n`);
+      process.stdout.write(`ccsquad daemon listening on 127.0.0.1:${port}\n`);
     });
   } else {
     if (fs.existsSync(SOCKET_PATH)) {
@@ -224,7 +224,7 @@ async function startServer(): Promise<void> {
       // Write PID and token only after socket is confirmed ready
       fs.writeFileSync(DAEMON_PID_PATH, String(process.pid), "utf8");
       fs.writeFileSync(SHUTDOWN_TOKEN_PATH, shutdownToken, { encoding: "utf8", mode: 0o600 });
-      process.stdout.write(`claude-squad daemon listening on ${SOCKET_PATH}\n`);
+      process.stdout.write(`ccsquad daemon listening on ${SOCKET_PATH}\n`);
     });
   }
 

@@ -1,6 +1,6 @@
 /**
- * claude-squad uninstall command
- * Removes MCP registration, CLAUDE.md block, status line hook, and ~/.claude-squad/ data.
+ * ccsquad uninstall command
+ * Removes MCP registration, CLAUDE.md block, status line hook, and ~/.ccsquad/ data.
  */
 import * as fs from "fs";
 import * as path from "path";
@@ -17,8 +17,8 @@ export interface UninstallOptions {
   squadDir?: string;
 }
 
-const SENTINEL_START_RE = /<!-- claude-squad:start(?: mode=\w+)? -->/;
-const SENTINEL_END = "<!-- claude-squad:end -->";
+const SENTINEL_START_RE = /<!-- ccsquad:start(?: mode=\w+)? -->/;
+const SENTINEL_END = "<!-- ccsquad:end -->";
 
 function defaultClaudeJsonPath(): string {
   return path.join(os.homedir(), ".claude.json");
@@ -29,7 +29,7 @@ function defaultSettingsJsonPath(): string {
 }
 
 function defaultSquadDir(): string {
-  return path.join(os.homedir(), ".claude-squad");
+  return path.join(os.homedir(), ".ccsquad");
 }
 
 function readJson(filePath: string): Record<string, unknown> | null {
@@ -108,7 +108,7 @@ async function killDaemon(squadDir: string): Promise<void> {
 
   // Strategy 3: pkill fallback
   try {
-    execSync("pkill -f 'claude-squad.*daemon'", { stdio: "pipe" });
+    execSync("pkill -f 'ccsquad.*daemon'", { stdio: "pipe" });
     await sleep(500);
     console.log("✓ Daemon stopped via pkill");
   } catch {
@@ -128,8 +128,8 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<void> {
   const cfg = readJson(claudeJsonPath);
   if (cfg) {
     const mcpServers = cfg.mcpServers as Record<string, unknown> | undefined;
-    if (mcpServers?.["claude-squad"]) {
-      delete mcpServers["claude-squad"];
+    if (mcpServers?.["ccsquad"]) {
+      delete mcpServers["ccsquad"];
       cfg.mcpServers = mcpServers;
       try {
         writeJsonAtomic(claudeJsonPath, cfg);
@@ -193,11 +193,11 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<void> {
 
   for (const mdPath of claudeMdCandidates) {
     if (removeSentinelBlock(mdPath)) {
-      console.log(`✓ claude-squad block removed from ${mdPath}`);
+      console.log(`✓ ccsquad block removed from ${mdPath}`);
     }
   }
 
-  // Step 5: Remove ~/.claude-squad/
+  // Step 5: Remove ~/.ccsquad/
   try {
     fs.rmSync(squadDir, { recursive: true, force: true });
     console.log(`✓ ${squadDir} deleted`);
@@ -205,5 +205,5 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<void> {
     console.error(`  Could not delete ${squadDir}: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  console.log(`\nclaude-squad removed. Check any other project CLAUDE.md files for leftover blocks.`);
+  console.log(`\nccsquad removed. Check any other project CLAUDE.md files for leftover blocks.`);
 }
