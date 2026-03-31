@@ -13,6 +13,7 @@ import {
 import * as path from "path";
 import { execSync } from "child_process";
 import { daemonRpc } from "./client.js";
+import { ensureRunning } from "./ensure-running.js";
 import { makeInstanceId, nowMs, getRepoId, formatAge, DEFAULT_MESSAGES_LIMIT, type Standup } from "./types.js";
 
 const STARTUP_TS = nowMs();
@@ -401,15 +402,12 @@ async function handleTool(
 }
 
 server.setRequestHandler(CallToolRequestSchema, async (req) => {
-  if (!instanceId) {
-    instanceId = await register();
-  }
 
   const { name, arguments: args = {} } = req.params;
 
   let result: { content: Array<{ type: string; text: string }>; isError?: boolean };
   try {
-    result = await handleTool(name, args as Record<string, unknown>, instanceId);
+    result = await handleTool(name, args as Record<string, unknown>, instanceId ?? "");
   } catch (err) {
     result = {
       content: [{ type: "text", text: `Error: ${err instanceof Error ? err.message : String(err)}` }],
@@ -432,6 +430,15 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
 });
 
 async function main(): Promise<void> {
+  // Ensure daemon is up, then register immediately so other instances can see us
+  try {
+    await ensureRunning();
+    instanceId = await register();
+  } catch (err) {
+    process.stderr.write(`ccsquad: failed to connect to daemon: ${err instanceof Error ? err.message : String(err)}\n`);
+    // Continue anyway — tools will surface errors naturally
+  }
+
   setInterval(async () => {
     if (instanceId) {
       const branch = getCurrentBranch();
