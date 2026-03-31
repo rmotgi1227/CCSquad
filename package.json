@@ -1,6 +1,6 @@
 {
   "name": "ccsquad",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A shared communication channel for Claude Code instances — a Slack channel for agents.",
   "type": "module",
   "main": "dist/cli.js",
@@ -19,7 +19,15 @@
     "test:coverage": "vitest run --coverage",
     "prepublishOnly": "npm run build && npm test"
   },
-  "keywords": ["claude", "claude-code", "mcp", "agents", "ai", "coordination", "multi-agent"],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "mcp",
+    "agents",
+    "ai",
+    "coordination",
+    "multi-agent"
+  ],
   "author": "",
   "license": "MIT",
   "repository": {
