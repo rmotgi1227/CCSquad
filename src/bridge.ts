@@ -352,7 +352,7 @@ async function handleTool(
       }
 
       case "list_instances": {
-        const result = await daemonRpc("list_instances", { repo: instanceRepo }) as { instances: unknown[] };
+        const result = await daemonRpc("list_instances", {}) as { instances: unknown[] };
         const instances = result.instances;
         if (instances.length === 0) {
           return { content: [{ type: "text", text: "No active instances." }] };
@@ -364,7 +364,8 @@ async function handleTool(
             const branch = i.branch ? `@${i.branch}` : "";
             const age = i.last_seen === 0 ? "offline" : formatAge(i.last_seen);
             const slot = i.slot != null ? `#${i.slot} ` : "";
-            return `• ${slot}${i.name}${branch}${me} — ${path.basename(i.cwd)} (${age})`;
+            const project = path.basename(i.cwd);
+            return `• ${slot}${i.name}${branch}${me} — ${project} (${age})`;
           })
           .join("\n");
         return { content: [{ type: "text", text: formatted }] };
